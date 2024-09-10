@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stop Watch</title>
+    <style>
+        body{
+            background-color: antiquewhite;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1{
+            font-size: 80px;;
+        }
+        .content{
+            font-size: 40px;
+            padding: 20px;
+            border-radius: 10px;
+            width:45%;
+            min-width:300px;
+            position:absolute;
+            top:30%;
+            left:28%;
+            box-shadow: 0 0 20px black;
+            text-align: center;
+        }
+        .time{
+            padding:2rem;
+            display:flex;
+            font-size:4.2rem;
+            font-weight: bold;
+            justify-content: space-around;
+            align-items: center;
+        }
+        button {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            margin: 10px;
+            flex:1;
+            display: flex;
+            justify-content: center;
+        }
+        #start{
+            background-color: #5cb85c;
+        }
+        #pause{
+            background-color: red;
+        }
+        #restart{
+            background-color: blueviolet;
+        }
+        #l{
+            background-color: #4c9eae;
+        }
+        #laps{
+            height:100px;
+            overflow:auto;
+            margin:0;
+            padding: 0;
+        }
+        #laps li{
+            font-size: 20px;
+            margin:0;
+            padding: 0;
+        }
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .time {
+                font-size: 2rem; 
+            }
+
+            button {
+                font-size: 1.2rem; 
+                padding: 0.7rem 1.2rem; 
+            }
+        }
+        @media (max-width: 480px) {
+            .content {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .time {
+                font-size: 1.5rem; 
+            }
+
+            button {
+                font-size: 1rem; 
+                padding: 0.5rem 1rem; 
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div><h1><center>Stop Watch</center></h1></div>
+    <div class="content">
+        <div class="time">
+                00 : 00 : 00 : 000
+        </div>
+        <ul id="laps"></ul>
+        <div class="b">
+            <button id="start">Start</button>
+            <button id="pause" style="display:none">Pause</button>
+            <button id="restart" style="display:none">Restart</button>
+            <button id="l" disabled>Lap</button>
+        </div>
+    </div>
+    <script>
+       
+        let t=document.querySelector(".time");
+        let milliseconds = 0, seconds = 0, minutes = 0, hours = 0;
+        let int = null;
+        let c=0;
+        document.getElementById("start").addEventListener("click", () => {
+            if(int!==null){
+                clearInterval(int);
+            }
+            int = setInterval(displayTimer, 10);
+            start.setAttribute("style","display:none");
+            pause.setAttribute("style","display:block");
+            l.setAttribute("style","display:block");
+            restart.setAttribute("style","display:none");
+            l.removeAttribute("disabled");
+        });
+        document.getElementById("pause").addEventListener("click",() => {
+            clearInterval(int);
+            l.setAttribute("style","display:none");
+            restart.setAttribute("style","display:block");
+            start.setAttribute("style","display:block");
+            start.innerHTML="Resume";
+            pause.setAttribute("style","display:none");
+        });
+        const p=(num)=>{
+            return String(num).padStart(2,"0");
+        }
+        document.getElementById("l").addEventListener("click", () => {
+            c++;  
+            let li = document.createElement("li"); 
+            li.innerHTML = `${c}: ${formatTime(hours, minutes, seconds, milliseconds)}`;
+            laps.appendChild(li);  
+            laps.scroll({ top: laps.scrollHeight, behavior: "smooth" }); 
+        });
+        document.getElementById("restart").addEventListener("click",() => {
+            clearInterval(int);
+            [milliseconds, seconds,minutes,hours]=[0, 0, 0, 0];
+            t.innerHTML="00 : 00 : 00 : 000";
+            laps.innerHTML="";
+            start.innerHTML="start";
+            l.setAttribute("style","display:block");
+            l.setAttribute("disabled",true);
+            restart.setAttribute("style","display:none");
+            start.setAttribute("style","display:block");
+            pause.setAttribute("style","display:none");
+            c=0;
+        });
+        function displayTimer() {
+            milliseconds+=10;
+            if(milliseconds===1000){
+                milliseconds=0;
+                seconds++;
+                if(seconds===60){
+                    seconds=0;
+                    minutes++;
+                    if(minutes===60){
+                        minutes=0;
+                        hours++;
+                    }
+                }
+            }
+            t.innerHTML = formatTime(hours, minutes, seconds, milliseconds);
+        }
+        function formatTime(hours, minutes, seconds, milliseconds) {
+            let h = hours < 10 ? "0" + hours : hours;
+            let m = minutes < 10 ? "0" + minutes : minutes;
+            let s = seconds < 10 ? "0" + seconds : seconds;
+            let ms = milliseconds < 10 ? "00" + milliseconds : milliseconds < 100 ? "0" + milliseconds : milliseconds;
+            return `${h} : ${m} : ${s} : ${ms}`;
+        }
+    </script>
+</body>
+</html>
